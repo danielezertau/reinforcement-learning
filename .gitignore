@@ -3,3 +3,4 @@ venv/
 data/
 runs/
 *.pkl
+*.pdf
