@@ -1,6 +1,7 @@
 """
     This file is copied/adapted from https://github.com/berkeleydeeprlcourse/homework/tree/master/hw3
 """
+import datetime
 import sys
 import pickle
 import numpy as np
@@ -271,14 +272,20 @@ def dqn_learning(
         Statistic["best_mean_episode_rewards"].append(best_mean_episode_reward)
 
         if t % LOG_EVERY_N_STEPS == 0 and t > learning_starts:
-            print("Timestep %d" % (t,))
-            print("mean reward (100 episodes) %f" % mean_episode_reward)
-            print("best mean reward %f" % best_mean_episode_reward)
-            print("episodes %d" % len(episode_rewards))
-            print("exploration %f" % exploration.value(t))
+            print_with_timestamp("Timestep %d" % (t,))
+            print_with_timestamp("mean reward (100 episodes) %f" % mean_episode_reward)
+            print_with_timestamp("best mean reward %f" % best_mean_episode_reward)
+            print_with_timestamp("episodes %d" % len(episode_rewards))
+            print_with_timestamp("exploration %f" % exploration.value(t))
             sys.stdout.flush()
 
             # Dump statistics to pickle
             with open(STATS_FILE, 'wb') as f:
                 pickle.dump(Statistic, f)
                 print("Saved to %s" % STATS_FILE)
+
+
+def print_with_timestamp(message):
+    now = datetime.datetime.now()
+    timestamp_str = now.strftime("%m/%d/%Y, %H:%M:%S,%f")[:-3]
+    print(f"[{timestamp_str}] {message.capitalize()}")
