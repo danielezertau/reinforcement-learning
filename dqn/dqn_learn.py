@@ -19,6 +19,7 @@ LOG_EVERY_N_STEPS = 10000
 STATS_FILE = f"statistics.pkl"
 USE_CUDA = torch.cuda.is_available()
 dtype = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class Variable(autograd.Variable):
@@ -132,8 +133,8 @@ def dqn_learning(
     # Initialize target q function and q function, i.e. build the model.
     ######
     # YOUR CODE HERE
-    Q = q_func(num_actions=num_actions)
-    target_Q = q_func(num_actions=num_actions)
+    Q = q_func(num_actions=num_actions).to(device)
+    target_Q = q_func(num_actions=num_actions).to(device)
     copy_model_(Q, target_Q)
     ######
 
