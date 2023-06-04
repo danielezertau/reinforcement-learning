@@ -282,7 +282,7 @@ def dqn_learning(
             # Dump statistics to pickle
             with open(STATS_FILE, 'wb') as f:
                 pickle.dump(Statistic, f)
-                print("Saved to %s" % STATS_FILE)
+                print_with_timestamp("Saved to %s" % STATS_FILE)
 
 
 def print_with_timestamp(message):
