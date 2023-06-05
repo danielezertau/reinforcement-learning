@@ -8,3 +8,4 @@ dqn/tmp/
 __pycache__/
 nohup.out
 stats/
+results/
