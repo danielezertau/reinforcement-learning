@@ -2,8 +2,10 @@ import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 
+import dqn.dqn_learn
+
 if __name__ == '__main__':
-    with open("statistics.pkl", 'rb') as f:
+    with open(dqn.dqn_learn.STATS_FILE, 'rb') as f:
         stats = pickle.load(f)
     plt.title("DQN Basic Results")
     plt.xlabel('Num Timesteps')
