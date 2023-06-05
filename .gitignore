@@ -5,3 +5,6 @@ runs/
 *.pkl
 *.pdf
 dqn/tmp/
+__pycache__/
+nohup.out
+stats/
