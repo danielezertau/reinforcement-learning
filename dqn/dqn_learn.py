@@ -19,7 +19,7 @@ from utils.gym import get_wrapper_by_name
 
 LOG_EVERY_N_STEPS = 10000
 STATS_DIR = "stats"
-STATS_FILE = f"{STATS_DIR}/statistics.pkl"
+STATS_FILE = f"{STATS_DIR}/statistics-exploration.pkl"
 USE_CUDA = torch.cuda.is_available()
 dtype = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
