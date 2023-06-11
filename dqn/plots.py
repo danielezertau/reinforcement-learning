@@ -33,9 +33,13 @@ def q2(files, labels, fig_name):
 
 
 if __name__ == '__main__':
-    q2(files=["statistics-exploration-01.pkl", "statistics-exploration-001.pkl", "statistics-orig.pkl"],
-       labels=["final=0.01", "final=0.001", "original"], fig_name="Q2-final-p.pdf")
-    q2(files=["statistics-exploration-01-25M.pkl", "statistics-exploration-25.pkl",
-              "statistics-exploration-001-25M.pkl", "statistics-orig.pkl"],
-       labels=["final=0.01, num_steps=2.5M", "num_steps=2.5M", "final=0.001, num_steps=2.5M", "original"],
-       fig_name="Q2-num-steps.pdf")
+    final_p_files = ["statistics-exploration-01.pkl", "statistics-exploration-001.pkl", "statistics-orig.pkl"]
+    final_p_labels = ["final=0.01", "final=0.001", "original"]
+    q2(files=final_p_files, labels=final_p_labels, fig_name="Q2-final-p.pdf")
+    plt.close()
+    num_steps_files = ["statistics-exploration-01-25M.pkl", "statistics-exploration-25.pkl",
+                       "statistics-exploration-001-25M.pkl", "statistics-orig.pkl"]
+    num_steps_labels = ["final=0.01, num_steps=2.5M", "num_steps=2.5M", "final=0.001, num_steps=2.5M", "original"]
+    q2(files=num_steps_files, labels=num_steps_labels, fig_name="Q2-num-steps.pdf")
+    plt.close()
+    q2(files=final_p_files + num_steps_files, labels=final_p_labels + num_steps_labels, fig_name="Q2-all.pdf")
