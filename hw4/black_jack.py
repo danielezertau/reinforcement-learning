@@ -137,9 +137,10 @@ def game(num_games):
             hit(player_hand)
             next_state = total(player_hand)
             td0(state, action, reward, next_state)
-        # Dealer
         if total(player_hand) > 21:
+            reset_deck()
             continue
+        # Dealer
         while total(dealer_hand) <= 15:
             hit(dealer_hand)
 
@@ -182,6 +183,7 @@ if __name__ == "__main__":
     game(n)
     # Fix zero division error
     num_visits[num_visits == 0] = 1
+    print(v_hat[4:22])
     states_visits_frac = np.sum(num_visits / n, axis=1)
     win_probs = (v_hat * states_visits_frac)
     for idx, prob in enumerate(win_probs):
