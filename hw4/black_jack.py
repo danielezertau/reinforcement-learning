@@ -4,6 +4,7 @@ import numpy as np
 
 deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11]*4
 GAMMA = 1
+FINAL_EPS = 0.01
 NUM_STATES = 31
 NUM_ACTIONS = 2
 v_hat = np.zeros(NUM_STATES + 1)
@@ -77,6 +78,15 @@ def blackjack(dealer_hand, player_hand):
         return False
 
 
+def double_aces(dealer_hand, player_hand):
+    if total(player_hand) == 22:
+        print_results(dealer_hand, player_hand)
+        print("Sorry, you lose. You got double aces\n")
+        return True
+    else:
+        return False
+
+
 def get_reward(game_result):
     if game_result == "win":
         return 1
@@ -119,35 +129,43 @@ def score(dealer_hand, player_hand):
 
 
 def game(num_games):
-    for _ in range(num_games):
+    for t in range(1, num_games + 1):
         clear()
         print("WELCOME TO BLACKJACK!\n")
         dealer_hand = deal()
         player_hand = deal()
         print("The dealer is showing a " + str(dealer_hand[0]))
         print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
-        if blackjack(dealer_hand, player_hand):
+        if blackjack(dealer_hand, player_hand) or double_aces(dealer_hand, player_hand):
             reset_deck()
             continue
         # Gambler
-        while total(player_hand) < 18:
+        done = bust = False
+        while not done and not bust:
             state = total(player_hand)
-            action = 1
-            reward = 0
-            hit(player_hand)
-            next_state = total(player_hand)
-            td0(state, action, reward, next_state)
+            action = pi(state, t)
+            # Hit
+            if action == 1:
+                reward = 0
+                hit(player_hand)
+                next_state = total(player_hand)
+                sarsa(state, action, reward, next_state, t)
+                if next_state > 21:
+                    bust = True
+            else:
+                done = True
+
         # Dealer
-        while total(dealer_hand) <= 15:
+        while total(dealer_hand) <= 15 and not bust:
             hit(dealer_hand)
 
         state = total(player_hand)
-        action = 0
         # Check who won
         reward = score(dealer_hand, player_hand)
-        next_state = state
-        # Perform TD step
-        td0(state, action, reward, next_state)
+        if not bust:
+            next_state = state
+            sarsa(state, action, reward, next_state, t)
+
         reset_deck()
 
 
@@ -159,12 +177,13 @@ def td0(state, action, reward, next_state):
 
 def sarsa(state, action, reward, next_state, t):
     next_action = pi(next_state, t)
+    num_visits[state][action] += 1
     alpha = 1 / num_visits[state][action]
-    q_hat[state, action] = q_hat + alpha * (reward + GAMMA * q_hat[next_state][next_action] - q_hat[state][action])
+    q_hat[state, action] += alpha * (reward + GAMMA * q_hat[next_state][next_action] - q_hat[state][action])
 
 
 def get_epsilon(t):
-    return 1 / t
+    return max(1 / t, FINAL_EPS)
 
 
 def pi(state, t):
@@ -176,8 +195,10 @@ def pi(state, t):
 
 
 if __name__ == "__main__":
-    n = 100
+    n = 10000
     game(n)
     # Fix zero division error
     num_visits[num_visits == 0] = 1
-    print(v_hat * (1 / np.sum(num_visits, axis=1)))
+    print(q_hat[4:22, :])
+    print(np.argmax(q_hat[4:22, :], axis=1))
+    # print(v_hat * (1 / np.sum(num_visits, axis=1)))
