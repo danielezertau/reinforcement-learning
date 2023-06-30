@@ -138,6 +138,8 @@ def game(num_games):
             next_state = total(player_hand)
             td0(state, action, reward, next_state)
         # Dealer
+        if total(player_hand) > 21:
+            continue
         while total(dealer_hand) <= 15:
             hit(dealer_hand)
 
@@ -176,8 +178,13 @@ def pi(state, t):
 
 
 if __name__ == "__main__":
-    n = 100
+    n = 1000
     game(n)
     # Fix zero division error
     num_visits[num_visits == 0] = 1
-    print(v_hat * (1 / np.sum(num_visits, axis=1)))
+    states_visits_frac = np.sum(num_visits / n, axis=1)
+    win_probs = (v_hat * states_visits_frac)
+    for idx, prob in enumerate(win_probs):
+        if 3 < idx < 22:
+            print(f"Prob of winning with {idx} is {prob}")
+
