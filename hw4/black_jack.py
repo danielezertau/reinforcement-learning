@@ -136,7 +136,7 @@ def game(num_games):
             reward = 0
             hit(player_hand)
             next_state = total(player_hand)
-            td0(state, action, reward, next_state)
+            td0(state, action, reward, next_state, next_state > 21)
         if total(player_hand) > 21:
             reset_deck()
             continue
@@ -150,14 +150,18 @@ def game(num_games):
         reward = score(dealer_hand, player_hand)
         next_state = state
         # Perform TD step
-        td0(state, action, reward, next_state)
+        td0(state, action, reward, next_state, True)
         reset_deck()
 
 
-def td0(state, action, reward, next_state):
+def td0(state, action, reward, next_state, done):
     num_visits[state][action] += 1
     alpha = 1 / num_visits[state][action]
-    v_hat[state] += alpha * (reward + GAMMA * v_hat[next_state] - v_hat[state])
+    if done:
+        v_next = 0
+    else:
+        v_next = v_hat[next_state]
+    v_hat[state] += alpha * (reward + GAMMA * v_next - v_hat[state])
 
 
 def sarsa(state, action, reward, next_state, t):
@@ -183,10 +187,7 @@ if __name__ == "__main__":
     game(n)
     # Fix zero division error
     num_visits[num_visits == 0] = 1
-    print(v_hat[4:22])
     states_visits_frac = np.sum(num_visits / n, axis=1)
     win_probs = (v_hat * states_visits_frac)
-    for idx, prob in enumerate(win_probs):
-        if 3 < idx < 22:
-            print(f"Prob of winning with {idx} is {prob}")
+    print(f"The probability of winning is {np.sum(win_probs)}")
 
