@@ -4,6 +4,7 @@ import numpy as np
 
 deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11]*4
 GAMMA = 1
+FINAL_EPS = 0.01
 NUM_STATES = 31
 NUM_ACTIONS = 2
 v_hat = np.zeros(NUM_STATES + 1)
@@ -77,6 +78,15 @@ def blackjack(dealer_hand, player_hand):
         return False
 
 
+def double_aces(dealer_hand, player_hand):
+    if total(player_hand) == 22:
+        print_results(dealer_hand, player_hand)
+        print("Sorry, you lose. You got double aces\n")
+        return True
+    else:
+        return False
+
+
 def get_reward(game_result):
     if game_result == "win":
         return 1
@@ -126,7 +136,7 @@ def game(num_games):
         player_hand = deal()
         print("The dealer is showing a " + str(dealer_hand[0]))
         print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
-        if blackjack(dealer_hand, player_hand):
+        if blackjack(dealer_hand, player_hand) or double_aces(dealer_hand, player_hand):
             reset_deck()
             continue
         # Gambler
@@ -166,12 +176,13 @@ def td0(state, action, reward, next_state, done):
 
 def sarsa(state, action, reward, next_state, t):
     next_action = pi(next_state, t)
+    num_visits[state][action] += 1
     alpha = 1 / num_visits[state][action]
-    q_hat[state, action] = q_hat + alpha * (reward + GAMMA * q_hat[next_state][next_action] - q_hat[state][action])
+    q_hat[state, action] += alpha * (reward + GAMMA * q_hat[next_state][next_action] - q_hat[state][action])
 
 
 def get_epsilon(t):
-    return 1 / t
+    return max(1 / t, FINAL_EPS)
 
 
 def pi(state, t):
