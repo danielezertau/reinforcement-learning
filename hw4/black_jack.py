@@ -270,7 +270,7 @@ def q1(num_games):
     states_visits_frac = np.sum(num_visits / num_games, axis=1)
     win_probs = (v_hat * states_visits_frac)
     print("TD0")
-    print(f"The probability of winning is {np.sum(win_probs)}")
+    print(f"The probability of winning is {np.sum(win_probs):.5f}")
 
 
 def q2(num_games):
@@ -287,7 +287,7 @@ def q2(num_games):
     for st, prob in enumerate(v_from_q[4:22]):
         opt_action = "hit" if np.argmax(q_hat[st + 4]) == 1 else "stay"
         print(f"State {st + 4}: winning prob: {prob:.5f}, optimal action: {opt_action}")
-    print(f"Total win prob: {np.sum(win_probs)}")
+    print(f"Total win prob: {np.sum(win_probs):.5f}")
 
 
 if __name__ == "__main__":
